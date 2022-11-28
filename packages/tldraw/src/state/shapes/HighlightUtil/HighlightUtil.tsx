@@ -55,6 +55,10 @@ export class HighlightUtil extends TDShapeUtil<T, E> {
     ({ shape, meta, isSelected, isGhost, events }, ref) => {
       const { points, style, isComplete } = shape
 
+      const polygonPathTDSnapshot = React.useMemo(() => {
+        return getFillPath(shape)
+      }, [points, style.size])
+
       const pathTDSnapshot = React.useMemo(() => {
         return style.dash === DashStyle.Draw
           ? getDrawStrokePathTDSnapshot(shape)
@@ -85,19 +89,91 @@ export class HighlightUtil extends TDShapeUtil<T, E> {
         )
       }
 
+      const shouldFill =
+        style.isFilled &&
+        points.length > 3 &&
+        Vec.dist(points[0], points[points.length - 1]) < strokeWidth * 2
+
+      if (shape.style.dash === DashStyle.Draw) {
+        return (
+          <SVGContainer ref={ref} id={shape.id + '_svg'} {...events}>
+            <g opacity={isGhost ? GHOSTED_OPACITY : 1}>
+              <path
+                className={shouldFill || isSelected ? 'tl-fill-hitarea' : 'tl-stroke-hitarea'}
+                d={pathTDSnapshot}
+              />
+              {shouldFill && (
+                <path
+                  d={polygonPathTDSnapshot}
+                  stroke="none"
+                  fill={fill}
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                  pointerEvents="none"
+                  opacity={0.6}
+                />
+              )}
+              <path
+                d={pathTDSnapshot}
+                fill={stroke}
+                stroke={stroke}
+                strokeWidth={strokeWidth / 2}
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                pointerEvents="none"
+                opacity={0.6}
+              />
+            </g>
+          </SVGContainer>
+        )
+      }
+
+      // For solid, dash and dotted lines, draw a regular stroke path
+
+      const strokeDasharray = {
+        [DashStyle.Draw]: 'none',
+        [DashStyle.Solid]: `none`,
+        [DashStyle.Dotted]: `0.1 ${strokeWidth * 4}`,
+        [DashStyle.Dashed]: `${strokeWidth * 4} ${strokeWidth * 4}`,
+      }[style.dash as DashStyle]
+
+      const strokeDashoffset = {
+        [DashStyle.Draw]: 'none',
+        [DashStyle.Solid]: `none`,
+        [DashStyle.Dotted]: `0`,
+        [DashStyle.Dashed]: `0`,
+      }[style.dash as DashStyle]
+
+      const sw = 1 + strokeWidth * 1.5
+
       return (
         <SVGContainer ref={ref} id={shape.id + '_svg'} {...events}>
           <g opacity={isGhost ? GHOSTED_OPACITY : 1}>
-            <path className="tl-fill-hitarea" d={pathTDSnapshot} />
+            <path
+              className={shouldFill && isSelected ? 'tl-fill-hitarea' : 'tl-stroke-hitarea'}
+              d={pathTDSnapshot}
+            />
             <path
               d={pathTDSnapshot}
-              fill={stroke}
-              stroke={stroke}
-              opacity={0.6}
-              strokeWidth={strokeWidth / 2}
+              fill={shouldFill ? fill : 'none'}
+              stroke="none"
+              strokeWidth={Math.min(4, strokeWidth * 2)}
               strokeLinejoin="round"
               strokeLinecap="round"
               pointerEvents="none"
+              opacity={0.6}
+            />
+            <path
+              d={pathTDSnapshot}
+              fill="none"
+              stroke={stroke}
+              strokeWidth={sw}
+              strokeDasharray={strokeDasharray}
+              strokeDashoffset={strokeDashoffset}
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              pointerEvents="none"
+              opacity={0.6}
             />
           </g>
         </SVGContainer>

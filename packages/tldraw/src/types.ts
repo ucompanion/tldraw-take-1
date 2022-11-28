@@ -218,9 +218,9 @@ export enum TDStatus {
 export type TDToolType =
   | 'select'
   | 'erase'
-  | 'highlight'
   | TDShapeType.Text
   | TDShapeType.Draw
+  | TDShapeType.Highlight
   | TDShapeType.Ellipse
   | TDShapeType.Rectangle
   | TDShapeType.Triangle

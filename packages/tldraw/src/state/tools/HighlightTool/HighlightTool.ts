@@ -1,7 +1,7 @@
 import { TLPointerEventHandler, Utils } from '@tldraw/core'
 import { Highlight } from '~state/shapes'
 import { BaseTool } from '~state/tools/BaseTool'
-import { ColorStyle, SessionType, TDShapeType } from '~types'
+import { SessionType, TDShapeType } from '~types'
 
 enum Status {
   Idle = 'idle',
@@ -11,7 +11,7 @@ enum Status {
 }
 
 export class HighlightTool extends BaseTool {
-  type = 'highlight' as const
+  type = TDShapeType.Highlight as const
 
   private lastShapeId?: string
 
@@ -58,7 +58,7 @@ export class HighlightTool extends BaseTool {
         parentId: currentPageId,
         childIndex,
         point: currentPoint,
-        style: { ...currentStyle, color: ColorStyle.Red },
+        style: { ...currentStyle },
       })
       this.lastShapeId = id
       this.app.patchCreate([newShape])
