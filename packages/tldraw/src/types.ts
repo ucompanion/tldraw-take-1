@@ -227,6 +227,7 @@ export type TDToolType =
   | TDShapeType.Line
   | TDShapeType.Arrow
   | TDShapeType.Sticky
+  | TDShapeType.Table
 
 export type Easing =
   | 'linear'
@@ -286,6 +287,7 @@ export enum FlipType {
 
 export enum TDShapeType {
   Sticky = 'sticky',
+  Table = 'table',
   Ellipse = 'ellipse',
   Rectangle = 'rectangle',
   Triangle = 'triangle',
@@ -402,6 +404,13 @@ export interface StickyShape extends TDBaseShape {
   text: string
 }
 
+// The shape created by the table tool
+export interface TableShape extends TDBaseShape {
+  type: TDShapeType.Table
+  size: number[]
+  text: string
+}
+
 // The shape created when multiple shapes are grouped
 export interface GroupShape extends TDBaseShape {
   type: TDShapeType.Group
@@ -420,6 +429,7 @@ export type TDShape =
   | TextShape
   | GroupShape
   | StickyShape
+  | TableShape
   | ImageShape
   | VideoShape
 

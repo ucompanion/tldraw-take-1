@@ -58,6 +58,10 @@ export const PrimaryTools = React.memo(function PrimaryTools() {
     app.selectTool(TDShapeType.Sticky)
   }, [app])
 
+  const selectTableTool = React.useCallback(() => {
+    app.selectTool(TDShapeType.Table)
+  }, [app])
+
   const uploadMedias = React.useCallback(async () => {
     app.openAsset()
   }, [app])
@@ -133,6 +137,15 @@ export const PrimaryTools = React.memo(function PrimaryTools() {
         label={intl.formatMessage({ id: 'sticky' })}
         onClick={selectStickyTool}
         isActive={activeTool === TDShapeType.Sticky}
+        id="TD-PrimaryTools-Pencil2"
+      >
+        <Pencil2Icon />
+      </ToolButtonWithTooltip>
+      <ToolButtonWithTooltip
+        kbd={'0'}
+        label={intl.formatMessage({ id: 'table' })}
+        onClick={selectTableTool}
+        isActive={activeTool === TDShapeType.Table}
         id="TD-PrimaryTools-Pencil2"
       >
         <Pencil2Icon />

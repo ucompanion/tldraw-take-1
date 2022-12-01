@@ -8,6 +8,7 @@ import { HighlightUtil } from './HighlightUtil'
 import { ImageUtil } from './ImageUtil'
 import { RectangleUtil } from './RectangleUtil'
 import { StickyUtil } from './StickyUtil'
+import { TableUtil } from './TableUtil'
 import { TextUtil } from './TextUtil'
 import { TriangleUtil } from './TriangleUtil'
 import { VideoUtil } from './VideoUtil'
@@ -21,6 +22,7 @@ export const Arrow = new ArrowUtil()
 export const Text = new TextUtil()
 export const Group = new GroupUtil()
 export const Sticky = new StickyUtil()
+export const Table = new TableUtil()
 export const Image = new ImageUtil()
 export const Video = new VideoUtil()
 
@@ -34,6 +36,7 @@ export const shapeUtils = {
   [TDShapeType.Text]: Text,
   [TDShapeType.Group]: Group,
   [TDShapeType.Sticky]: Sticky,
+  [TDShapeType.Table]: Table,
   [TDShapeType.Image]: Image,
   [TDShapeType.Video]: Video,
 }
