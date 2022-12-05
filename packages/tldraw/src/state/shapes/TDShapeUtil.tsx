@@ -8,7 +8,7 @@ import {
 import { Vec } from '@tldraw/vec'
 import * as React from 'react'
 import { BINDING_DISTANCE } from '~constants'
-import { AlignStyle, ShapesWithProp, TDBinding, TDMeta, TDShape, TransformInfo } from '~types'
+import { AlignStyle, TDMeta, TDShape, TransformInfo } from '~types'
 import { getFontFace, getFontSize, getFontStyle, getShapeStyle } from './shared'
 import { getTextLabelSize } from './shared/getTextSize'
 import { getTextSvgElement } from './shared/getTextSvgElement'
@@ -145,7 +145,7 @@ export abstract class TDShapeUtil<T extends TDShape, E extends Element = any> ex
     return props
   }
 
-  transform = (shape: T, bounds: TLBounds, info: TransformInfo<T>): Partial<T> => {
+  transform = (shape: T, bounds: TLBounds, _info: TransformInfo<T>): Partial<T> => {
     return { ...shape, point: [bounds.minX, bounds.minY] }
   }
 

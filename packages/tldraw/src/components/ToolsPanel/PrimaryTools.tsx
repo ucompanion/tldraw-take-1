@@ -1,9 +1,12 @@
 import {
+  ArchiveIcon,
   ArrowTopRightIcon,
   CursorArrowIcon,
   ImageIcon,
+  MagicWandIcon,
   Pencil1Icon,
   Pencil2Icon,
+  TableIcon,
   TextIcon,
 } from '@radix-ui/react-icons'
 import * as React from 'react'
@@ -62,6 +65,10 @@ export const PrimaryTools = React.memo(function PrimaryTools() {
     app.selectTool(TDShapeType.Table)
   }, [app])
 
+  const selectTemplateTool = React.useCallback(() => {
+    app.selectTool(TDShapeType.Template)
+  }, [app])
+
   const uploadMedias = React.useCallback(async () => {
     app.openAsset()
   }, [app])
@@ -85,15 +92,6 @@ export const PrimaryTools = React.memo(function PrimaryTools() {
         <CursorArrowIcon />
       </ToolButtonWithTooltip>
       <ToolButtonWithTooltip
-        kbd={'a'}
-        label={intl.formatMessage({ id: 'highlight' })}
-        onClick={selectHighlightTool}
-        isActive={activeTool === TDShapeType.Highlight}
-        id="TD-PrimaryTools-CursorArrow"
-      >
-        <CursorArrowIcon />
-      </ToolButtonWithTooltip>
-      <ToolButtonWithTooltip
         kbd={'2'}
         label={intl.formatMessage({ id: 'draw' })}
         onClick={selectDrawTool}
@@ -101,6 +99,15 @@ export const PrimaryTools = React.memo(function PrimaryTools() {
         id="TD-PrimaryTools-Pencil"
       >
         <Pencil1Icon />
+      </ToolButtonWithTooltip>
+      <ToolButtonWithTooltip
+        kbd={'a'}
+        label={intl.formatMessage({ id: 'highlight' })}
+        onClick={selectHighlightTool}
+        isActive={activeTool === TDShapeType.Highlight}
+        id="TD-PrimaryTools-CursorArrow"
+      >
+        <MagicWandIcon />
       </ToolButtonWithTooltip>
       <ToolButtonWithTooltip
         kbd={'3'}
@@ -146,9 +153,18 @@ export const PrimaryTools = React.memo(function PrimaryTools() {
         label={intl.formatMessage({ id: 'table' })}
         onClick={selectTableTool}
         isActive={activeTool === TDShapeType.Table}
-        id="TD-PrimaryTools-Pencil2"
+        id="TD-PrimaryTools-Table"
       >
-        <Pencil2Icon />
+        <TableIcon />
+      </ToolButtonWithTooltip>
+      <ToolButtonWithTooltip
+        kbd={'0'}
+        label={intl.formatMessage({ id: 'template' })}
+        onClick={selectTemplateTool}
+        isActive={activeTool === TDShapeType.Template}
+        id="TD-PrimaryTools-Archive"
+      >
+        <ArchiveIcon />
       </ToolButtonWithTooltip>
       <ToolButtonWithTooltip
         label={intl.formatMessage({ id: 'image' })}

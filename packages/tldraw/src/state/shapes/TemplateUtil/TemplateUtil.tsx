@@ -1,41 +1,28 @@
 import { HTMLContainer, TLBounds, Utils } from '@tldraw/core'
 import { Vec } from '@tldraw/vec'
 import * as React from 'react'
-// import { stopPropagation } from '~components/stopPropagation'
-import {
-  GHOSTED_OPACITY,
-  /* LETTER_SPACING */
-} from '~constants'
-// import { TLDR } from '~state/TLDR'
+import { stopPropagation } from '~components/stopPropagation'
+import { GHOSTED_OPACITY, LETTER_SPACING } from '~constants'
+import { TLDR } from '~state/TLDR'
 import { TDShapeUtil } from '~state/shapes/TDShapeUtil'
 import {
-  // TextAreaUtils,
+  TextAreaUtils,
   defaultTextStyle,
   getBoundsRectangle,
   getFontFace,
-  getStickyFontSize, // getFontFace,
-  // getStickyFontSize,
+  getStickyFontSize,
   getStickyFontStyle,
   getStickyShapeStyle,
-  getTextSvgElement, // getTextSvgElement,
+  getTextSvgElement,
 } from '~state/shapes/shared'
 import { styled } from '~styles'
-import {
-  /* AlignStyle,  */
-  TDMeta,
-  TDShapeType,
-  TableShape,
-  TransformInfo,
-  AlignStyle,
-} from '~types'
-import { getTableElement } from '../shared/getTableElement'
-import { flexRender } from '@tanstack/react-table'
+import { AlignStyle, TDMeta, TDShapeType, TemplateShape, TransformInfo } from '~types'
 
-type T = TableShape
+type T = TemplateShape
 type E = HTMLDivElement
 
-export class TableUtil extends TDShapeUtil<T, E> {
-  type = TDShapeType.Table as const
+export class TemplateUtil extends TDShapeUtil<T, E> {
+  type = TDShapeType.Template as const
 
   canBind = true
 
@@ -51,12 +38,12 @@ export class TableUtil extends TDShapeUtil<T, E> {
     return Utils.deepMerge<T>(
       {
         id: 'id',
-        type: TDShapeType.Table,
-        name: 'Table',
+        type: TDShapeType.Template,
+        name: 'Sticky',
         parentId: 'page',
         childIndex: 1,
         point: [0, 0],
-        size: [500, 500],
+        size: [400, 400],
         text: '',
         rotation: 0,
         style: defaultTextStyle,
@@ -66,138 +53,137 @@ export class TableUtil extends TDShapeUtil<T, E> {
   }
 
   Component = TDShapeUtil.Component<T, E, TDMeta>(
-    (
-      { shape, meta, events, isGhost /* isBinding, isEditing onShapeBlur,  onShapeChange*/ },
-      ref
-    ) => {
+    ({ shape, meta, events, isGhost, isBinding, isEditing, onShapeBlur, onShapeChange }, ref) => {
       const font = getStickyFontStyle(shape.style)
 
-      const { color /* fill  */ } = getStickyShapeStyle(shape.style, meta.isDarkMode)
+      const { color, fill } = getStickyShapeStyle(shape.style, meta.isDarkMode)
 
-      const tableContainer = React.useRef<HTMLTableElement>(null)
+      const rContainer = React.useRef<HTMLDivElement>(null)
 
-      // const rText = React.useRef<HTMLDivElement>(null)
+      const rTextArea = React.useRef<HTMLTextAreaElement>(null)
 
-      /*  const rIsMounted = React.useRef(false) */
+      const rText = React.useRef<HTMLDivElement>(null)
 
-      // const handlePointerDown = React.useCallback((e: React.PointerEvent) => {
-      //   e.stopPropagation()
-      // }, [])
+      const rIsMounted = React.useRef(false)
 
-      // const onChange = React.useCallback(
-      //   (text: string) => {
-      //     onShapeChange?.({
-      //       id: shape.id,
-      //       type: shape.type,
-      //       text: TLDR.normalizeText(text),
-      //     })
-      //   },
-      //   [shape.id]
-      // )
+      const handlePointerDown = React.useCallback((e: React.PointerEvent) => {
+        e.stopPropagation()
+      }, [])
 
-      // const handleTextChange = React.useCallback(
-      //   (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      //     onChange(e.currentTarget.value)
-      //   },
-      //   [onShapeChange, onChange]
-      // )
+      const onChange = React.useCallback(
+        (text: string) => {
+          onShapeChange?.({
+            id: shape.id,
+            type: shape.type,
+            text: TLDR.normalizeText(text),
+          })
+        },
+        [shape.id]
+      )
 
-      // const handleKeyDown = React.useCallback(
-      //   (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      //     if (e.key === 'Escape') {
-      //       e.preventDefault()
-      //       e.stopPropagation()
-      //       onShapeBlur?.()
-      //       return
-      //     }
+      const handleTextChange = React.useCallback(
+        (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+          onChange(e.currentTarget.value)
+        },
+        [onShapeChange, onChange]
+      )
 
-      //     if (e.key === 'Tab' && shape.text.length === 0) {
-      //       e.preventDefault()
-      //       return
-      //     }
+      const handleKeyDown = React.useCallback(
+        (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+          if (e.key === 'Escape') {
+            e.preventDefault()
+            e.stopPropagation()
+            onShapeBlur?.()
+            return
+          }
 
-      //     if (!(e.key === 'Meta' || e.metaKey)) {
-      //       e.stopPropagation()
-      //     } else if (e.key === 'z' && e.metaKey) {
-      //       if (e.shiftKey) {
-      //         document.execCommand('redo', false)
-      //       } else {
-      //         document.execCommand('undo', false)
-      //       }
-      //       e.stopPropagation()
-      //       e.preventDefault()
-      //       return
-      //     }
-      //     if ((e.metaKey || e.ctrlKey) && e.key === '=') {
-      //       e.preventDefault()
-      //     }
-      //     if (e.key === 'Tab') {
-      //       e.preventDefault()
-      //       if (e.shiftKey) {
-      //         TextAreaUtils.unindent(e.currentTarget)
-      //       } else {
-      //         TextAreaUtils.indent(e.currentTarget)
-      //       }
+          if (e.key === 'Tab' && shape.text.length === 0) {
+            e.preventDefault()
+            return
+          }
 
-      //       onShapeChange?.({ ...shape, text: TLDR.normalizeText(e.currentTarget.value) })
-      //     }
-      //   },
-      //   [shape, onShapeChange]
-      // )
+          if (!(e.key === 'Meta' || e.metaKey)) {
+            e.stopPropagation()
+          } else if (e.key === 'z' && e.metaKey) {
+            if (e.shiftKey) {
+              document.execCommand('redo', false)
+            } else {
+              document.execCommand('undo', false)
+            }
+            e.stopPropagation()
+            e.preventDefault()
+            return
+          }
+          if ((e.metaKey || e.ctrlKey) && e.key === '=') {
+            e.preventDefault()
+          }
+          if (e.key === 'Tab') {
+            e.preventDefault()
+            if (e.shiftKey) {
+              TextAreaUtils.unindent(e.currentTarget)
+            } else {
+              TextAreaUtils.indent(e.currentTarget)
+            }
 
-      // const handleBlur = React.useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
-      //   e.currentTarget.setSelectionRange(0, 0)
-      //   onShapeBlur?.()
-      // }, [])
+            onShapeChange?.({ ...shape, text: TLDR.normalizeText(e.currentTarget.value) })
+          }
+        },
+        [shape, onShapeChange]
+      )
 
-      // const handleFocus = React.useCallback(
-      //   (e: React.FocusEvent<HTMLTextAreaElement>) => {
-      //     if (!isEditing) return
-      //     if (!rIsMounted.current) return
-      //     e.currentTarget.select()
-      //   },
-      //   [isEditing]
-      // )
+      const handleBlur = React.useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
+        e.currentTarget.setSelectionRange(0, 0)
+        onShapeBlur?.()
+      }, [])
+
+      const handleFocus = React.useCallback(
+        (e: React.FocusEvent<HTMLTextAreaElement>) => {
+          if (!isEditing) return
+          if (!rIsMounted.current) return
+          e.currentTarget.select()
+        },
+        [isEditing]
+      )
 
       // Focus when editing changes to true
-      // React.useEffect(() => {
-      //   if (isEditing) {
-      //     rIsMounted.current = true
-      //     const elm = rTextArea.current!
-      //     elm.focus()
-      //     elm.select()
-      //   }
-      // }, [isEditing])
+      React.useEffect(() => {
+        if (isEditing) {
+          rIsMounted.current = true
+          const elm = rTextArea.current!
+          elm.focus()
+          elm.select()
+        }
+      }, [isEditing])
 
       // Resize to fit text
-      // React.useEffect(() => {
-      //   const text = rText.current!
+      React.useEffect(() => {
+        const text = rText.current!
 
-      //   const { size } = shape
-      //   const { offsetHeight: currTextHeight } = text
-      //   const minTextHeight = MIN_CONTAINER_HEIGHT - PADDING * 2
-      //   const prevTextHeight = size[1] - PADDING * 2
+        const { size } = shape
+        const { offsetHeight: currTextHeight } = text
+        const minTextHeight = MIN_CONTAINER_HEIGHT - PADDING * 2
+        const prevTextHeight = size[1] - PADDING * 2
 
-      //   // Same size? We can quit here
-      //   if (currTextHeight === prevTextHeight) return
+        // Same size? We can quit here
+        if (currTextHeight === prevTextHeight) return
 
-      //   if (currTextHeight > minTextHeight) {
-      //     // Snap the size to the text content if the text only when the
-      //     // text is larger than the minimum text height.
-      //     onShapeChange?.({ id: shape.id, size: [size[0], currTextHeight + PADDING * 2] })
-      //     return
-      //   }
+        if (currTextHeight > minTextHeight) {
+          // Snap the size to the text content if the text only when the
+          // text is larger than the minimum text height.
+          onShapeChange?.({ id: shape.id, size: [size[0], currTextHeight + PADDING * 2] })
+          return
+        }
 
-      //   if (currTextHeight < minTextHeight && size[1] > MIN_CONTAINER_HEIGHT) {
-      //     // If we're smaller than the minimum height and the container
-      //     // is too tall, snap it down to the minimum container height
-      //     onShapeChange?.({ id: shape.id, size: [size[0], MIN_CONTAINER_HEIGHT] })
-      //     return
-      //   }
+        if (currTextHeight < minTextHeight && size[1] > MIN_CONTAINER_HEIGHT) {
+          // If we're smaller than the minimum height and the container
+          // is too tall, snap it down to the minimum container height
+          onShapeChange?.({ id: shape.id, size: [size[0], MIN_CONTAINER_HEIGHT] })
+          return
+        }
 
-      //   const textarea = rTextArea.current
-      //   textarea?.focus()
-      // }, [shape.text, shape.size[1], shape.style])
+        const textarea = rTextArea.current
+        textarea?.focus()
+      }, [shape.text, shape.size[1], shape.style])
 
       const style = {
         font,
@@ -209,16 +195,29 @@ export class TableUtil extends TDShapeUtil<T, E> {
 
       return (
         <HTMLContainer ref={ref} {...events}>
-          <StyledTableContainer
-            ref={tableContainer}
+          <StyledStickyContainer
+            ref={rContainer}
             isDarkMode={meta.isDarkMode}
             isGhost={isGhost}
-            style={{ ...style }}
+            style={{ backgroundColor: fill, ...style }}
           >
-            {/* <StyledText ref={rText} isEditing={isEditing} alignment={shape.style.textAlign}>
+            {isBinding && (
+              <div
+                className="tl-binding-indicator"
+                style={{
+                  position: 'absolute',
+                  top: -this.bindingDistance,
+                  left: -this.bindingDistance,
+                  width: `calc(100% + ${this.bindingDistance * 2}px)`,
+                  height: `calc(100% + ${this.bindingDistance * 2}px)`,
+                  backgroundColor: 'var(--tl-selectFill)',
+                }}
+              />
+            )}
+            <StyledText ref={rText} isEditing={isEditing} alignment={shape.style.textAlign}>
               {shape.text}&#8203;
-            </StyledText> */}
-            {/* {isEditing && (
+            </StyledText>
+            {isEditing && (
               <StyledTextArea
                 ref={rTextArea}
                 onPointerDown={handlePointerDown}
@@ -240,8 +239,8 @@ export class TableUtil extends TDShapeUtil<T, E> {
                 onPaste={stopPropagation}
                 onCut={stopPropagation}
               />
-            )} */}
-          </StyledTableContainer>
+            )}
+          </StyledStickyContainer>
         </HTMLContainer>
       )
     }
@@ -321,21 +320,6 @@ export class TableUtil extends TDShapeUtil<T, E> {
 
     return g
   }
-
-  getTableElement = (/* shape: T */): JSX.Element[] | void => {
-    const tableElm = getTableElement()
-    const _tableHeadItem = tableElm.getHeaderGroups().map(headerGroup => (
-      <tr key={headerGroup.id}>
-        {headerGroup.headers.map(header => (
-          <th key={header.id}>
-            {header.isPlaceholder
-              ? null
-              : flexRender(header.column.columnDef.header, header.getContext())}
-          </th>
-        ))}
-      </tr>
-    ))
-  }
 }
 
 /* -------------------------------------------------- */
@@ -343,11 +327,12 @@ export class TableUtil extends TDShapeUtil<T, E> {
 /* -------------------------------------------------- */
 
 const PADDING = 16
-// const MIN_CONTAINER_HEIGHT = 200
+const MIN_CONTAINER_HEIGHT = 200
 
-const StyledTableContainer = styled('table', {
+const StyledStickyContainer = styled('div', {
   pointerEvents: 'all',
   position: 'relative',
+  backgroundColor: 'rgba(255, 220, 100)',
   fontFamily: 'sans-serif',
   height: '100%',
   width: '100%',
@@ -370,21 +355,15 @@ const StyledTableContainer = styled('table', {
       },
     },
   },
-  th: {
-    border: '1px solid #000',
-  },
-  td: {
-    border: '1px solid #000',
-  },
 })
 
-/* const commonTextWrapping = {
+const commonTextWrapping = {
   whiteSpace: 'pre-wrap',
   overflowWrap: 'break-word',
   letterSpacing: LETTER_SPACING,
-} */
+}
 
-/* const StyledText = styled('div', {
+const StyledText = styled('div', {
   position: 'absolute',
   top: PADDING,
   left: PADDING,
@@ -455,4 +434,4 @@ const StyledTextArea = styled('textarea', {
     outline: 'none',
     border: 'none',
   },
-}) */
+})

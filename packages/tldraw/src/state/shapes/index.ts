@@ -9,6 +9,7 @@ import { ImageUtil } from './ImageUtil'
 import { RectangleUtil } from './RectangleUtil'
 import { StickyUtil } from './StickyUtil'
 import { TableUtil } from './TableUtil'
+import { TemplateUtil } from './TemplateUtil'
 import { TextUtil } from './TextUtil'
 import { TriangleUtil } from './TriangleUtil'
 import { VideoUtil } from './VideoUtil'
@@ -25,6 +26,7 @@ export const Sticky = new StickyUtil()
 export const Table = new TableUtil()
 export const Image = new ImageUtil()
 export const Video = new VideoUtil()
+export const Template = new TemplateUtil()
 
 export const shapeUtils = {
   [TDShapeType.Rectangle]: Rectangle,
@@ -39,6 +41,7 @@ export const shapeUtils = {
   [TDShapeType.Table]: Table,
   [TDShapeType.Image]: Image,
   [TDShapeType.Video]: Video,
+  [TDShapeType.Template]: Template,
 }
 
 export const getShapeUtil = <T extends TDShape>(shape: T | T['type']) => {

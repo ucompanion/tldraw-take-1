@@ -86,6 +86,7 @@ import { StickyTool } from './tools/StickyTool'
 import { TextTool } from './tools/TextTool'
 import { TriangleTool } from './tools/TriangleTool'
 import { TableTool } from './tools/TableTool'
+import { TemplateTool } from './tools/TemplateTool'
 
 const uuid = Utils.uniqueId()
 
@@ -212,6 +213,7 @@ export class TldrawApp extends StateManager<TDSnapshot> {
     [TDShapeType.Arrow]: new ArrowTool(this),
     [TDShapeType.Sticky]: new StickyTool(this),
     [TDShapeType.Table]: new TableTool(this),
+    [TDShapeType.Template]: new TemplateTool(this),
   }
 
   currentTool: BaseTool = this.tools.select

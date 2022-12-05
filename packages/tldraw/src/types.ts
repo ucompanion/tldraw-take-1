@@ -228,6 +228,7 @@ export type TDToolType =
   | TDShapeType.Arrow
   | TDShapeType.Sticky
   | TDShapeType.Table
+  | TDShapeType.Template
 
 export type Easing =
   | 'linear'
@@ -299,6 +300,7 @@ export enum TDShapeType {
   Group = 'group',
   Image = 'image',
   Video = 'video',
+  Template = 'template',
 }
 
 export enum Decoration {
@@ -411,6 +413,12 @@ export interface TableShape extends TDBaseShape {
   text: string
 }
 
+export interface TemplateShape extends TDBaseShape {
+  type: TDShapeType.Template
+  size: number[]
+  text: string
+}
+
 // The shape created when multiple shapes are grouped
 export interface GroupShape extends TDBaseShape {
   type: TDShapeType.Group
@@ -432,6 +440,7 @@ export type TDShape =
   | TableShape
   | ImageShape
   | VideoShape
+  | TemplateShape
 
 /* ------------------ Shape Styles ------------------ */
 
