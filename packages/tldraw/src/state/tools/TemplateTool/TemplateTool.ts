@@ -44,7 +44,6 @@ export class TemplateTool extends BaseTool {
         childIndex,
         point: showGrid ? Vec.snap(currentPoint, currentGrid) : currentPoint,
         style: { ...currentStyle },
-        size: [600, 400]
       })
 
       const bounds = Template.getBounds(newShape)

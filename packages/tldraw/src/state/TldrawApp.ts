@@ -83,10 +83,10 @@ import { LineTool } from './tools/LineTool'
 import { RectangleTool } from './tools/RectangleTool'
 import { SelectTool } from './tools/SelectTool'
 import { StickyTool } from './tools/StickyTool'
+import { TemplateTool } from './tools/TemplateTool'
 import { TextTool } from './tools/TextTool'
 import { TriangleTool } from './tools/TriangleTool'
 import { TableTool } from './tools/TableTool'
-import { TemplateTool } from './tools/TemplateTool'
 
 const uuid = Utils.uniqueId()
 

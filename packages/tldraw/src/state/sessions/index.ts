@@ -16,6 +16,7 @@ export type TldrawSession =
   | ArrowSession
   | BrushSession
   | DrawSession
+  | HighlightSession
   | HandleSession
   | RotateSession
   | TransformSession

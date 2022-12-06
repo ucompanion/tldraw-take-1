@@ -43,7 +43,7 @@ export class TemplateUtil extends TDShapeUtil<T, E> {
         parentId: 'page',
         childIndex: 1,
         point: [0, 0],
-        size: [200, 200],
+        size: [400, 400],
         text: '',
         rotation: 0,
         style: defaultTextStyle,
@@ -215,7 +215,7 @@ export class TemplateUtil extends TDShapeUtil<T, E> {
               />
             )}
             <StyledText ref={rText} isEditing={isEditing} alignment={shape.style.textAlign}>
-              {shape.text}&#8203;
+              {shape.text}jajljaf &#8203;
             </StyledText>
             {isEditing && (
               <StyledTextArea

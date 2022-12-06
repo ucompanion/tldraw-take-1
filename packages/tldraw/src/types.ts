@@ -413,6 +413,7 @@ export interface TableShape extends TDBaseShape {
   text: string
 }
 
+// The shape created by the template tool
 export interface TemplateShape extends TDBaseShape {
   type: TDShapeType.Template
   size: number[]
