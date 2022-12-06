@@ -39,11 +39,11 @@ export class TemplateUtil extends TDShapeUtil<T, E> {
       {
         id: 'id',
         type: TDShapeType.Template,
-        name: 'Sticky',
+        name: 'Template',
         parentId: 'page',
         childIndex: 1,
         point: [0, 0],
-        size: [400, 400],
+        size: [200, 200],
         text: '',
         rotation: 0,
         style: defaultTextStyle,
@@ -327,7 +327,7 @@ export class TemplateUtil extends TDShapeUtil<T, E> {
 /* -------------------------------------------------- */
 
 const PADDING = 16
-const MIN_CONTAINER_HEIGHT = 200
+const MIN_CONTAINER_HEIGHT = 400
 
 const StyledStickyContainer = styled('div', {
   pointerEvents: 'all',
