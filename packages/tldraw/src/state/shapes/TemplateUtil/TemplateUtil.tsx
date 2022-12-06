@@ -1,22 +1,19 @@
 import { HTMLContainer, TLBounds, Utils } from '@tldraw/core'
 import { Vec } from '@tldraw/vec'
 import * as React from 'react'
-import { stopPropagation } from '~components/stopPropagation'
-import { GHOSTED_OPACITY, LETTER_SPACING } from '~constants'
-import { TLDR } from '~state/TLDR'
+import { GHOSTED_OPACITY } from '~constants'
 import { TDShapeUtil } from '~state/shapes/TDShapeUtil'
 import {
-  TextAreaUtils,
   defaultTextStyle,
   getBoundsRectangle,
   getFontFace,
   getStickyFontSize,
-  getStickyFontStyle,
   getStickyShapeStyle,
   getTextSvgElement,
 } from '~state/shapes/shared'
 import { styled } from '~styles'
 import { AlignStyle, TDMeta, TDShapeType, TemplateShape, TransformInfo } from '~types'
+import { MinusCircledIcon, PlusCircledIcon } from '@radix-ui/react-icons'
 
 type T = TemplateShape
 type E = HTMLDivElement
@@ -43,7 +40,7 @@ export class TemplateUtil extends TDShapeUtil<T, E> {
         parentId: 'page',
         childIndex: 1,
         point: [0, 0],
-        size: [400, 400],
+        size: [TEMPLATE_WIDTH, TEMPLATE_WIDTH * 0.70707],
         text: '',
         rotation: 0,
         style: defaultTextStyle,
@@ -52,199 +49,36 @@ export class TemplateUtil extends TDShapeUtil<T, E> {
     )
   }
 
-  Component = TDShapeUtil.Component<T, E, TDMeta>(
-    ({ shape, meta, events, isGhost, isBinding, isEditing, onShapeBlur, onShapeChange }, ref) => {
-      const font = getStickyFontStyle(shape.style)
+  Component = TDShapeUtil.Component<T, E, TDMeta>(({ meta, events, isGhost }, ref) => {
+    const rContainer = React.useRef<HTMLDivElement>(null)
 
-      const { color, fill } = getStickyShapeStyle(shape.style, meta.isDarkMode)
+    const style = {
+      textShadow: meta.isDarkMode
+        ? `0.5px 0.5px 2px rgba(255, 255, 255,.25)`
+        : `0.5px 0.5px 2px rgba(255, 255, 255,.5)`,
+    }
 
-      const rContainer = React.useRef<HTMLDivElement>(null)
-
-      const rTextArea = React.useRef<HTMLTextAreaElement>(null)
-
-      const rText = React.useRef<HTMLDivElement>(null)
-
-      const rIsMounted = React.useRef(false)
-
-      const handlePointerDown = React.useCallback((e: React.PointerEvent) => {
-        e.stopPropagation()
-      }, [])
-
-      const onChange = React.useCallback(
-        (text: string) => {
-          onShapeChange?.({
-            id: shape.id,
-            type: shape.type,
-            text: TLDR.normalizeText(text),
-          })
-        },
-        [shape.id]
-      )
-
-      const handleTextChange = React.useCallback(
-        (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-          onChange(e.currentTarget.value)
-        },
-        [onShapeChange, onChange]
-      )
-
-      const handleKeyDown = React.useCallback(
-        (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-          if (e.key === 'Escape') {
-            e.preventDefault()
-            e.stopPropagation()
-            onShapeBlur?.()
-            return
-          }
-
-          if (e.key === 'Tab' && shape.text.length === 0) {
-            e.preventDefault()
-            return
-          }
-
-          if (!(e.key === 'Meta' || e.metaKey)) {
-            e.stopPropagation()
-          } else if (e.key === 'z' && e.metaKey) {
-            if (e.shiftKey) {
-              document.execCommand('redo', false)
-            } else {
-              document.execCommand('undo', false)
-            }
-            e.stopPropagation()
-            e.preventDefault()
-            return
-          }
-          if ((e.metaKey || e.ctrlKey) && e.key === '=') {
-            e.preventDefault()
-          }
-          if (e.key === 'Tab') {
-            e.preventDefault()
-            if (e.shiftKey) {
-              TextAreaUtils.unindent(e.currentTarget)
-            } else {
-              TextAreaUtils.indent(e.currentTarget)
-            }
-
-            onShapeChange?.({ ...shape, text: TLDR.normalizeText(e.currentTarget.value) })
-          }
-        },
-        [shape, onShapeChange]
-      )
-
-      const handleBlur = React.useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
-        e.currentTarget.setSelectionRange(0, 0)
-        onShapeBlur?.()
-      }, [])
-
-      const handleFocus = React.useCallback(
-        (e: React.FocusEvent<HTMLTextAreaElement>) => {
-          if (!isEditing) return
-          if (!rIsMounted.current) return
-          e.currentTarget.select()
-        },
-        [isEditing]
-      )
-
-      // Focus when editing changes to true
-      React.useEffect(() => {
-        if (isEditing) {
-          rIsMounted.current = true
-          const elm = rTextArea.current!
-          elm.focus()
-          elm.select()
-        }
-      }, [isEditing])
-
-      // Resize to fit text
-      React.useEffect(() => {
-        const text = rText.current!
-
-        const { size } = shape
-        const { offsetHeight: currTextHeight } = text
-        const minTextHeight = MIN_CONTAINER_HEIGHT - PADDING * 2
-        const prevTextHeight = size[1] - PADDING * 2
-
-        // Same size? We can quit here
-        if (currTextHeight === prevTextHeight) return
-
-        if (currTextHeight > minTextHeight) {
-          // Snap the size to the text content if the text only when the
-          // text is larger than the minimum text height.
-          onShapeChange?.({ id: shape.id, size: [size[0], currTextHeight + PADDING * 2] })
-          return
-        }
-
-        if (currTextHeight < minTextHeight && size[1] > MIN_CONTAINER_HEIGHT) {
-          // If we're smaller than the minimum height and the container
-          // is too tall, snap it down to the minimum container height
-          onShapeChange?.({ id: shape.id, size: [size[0], MIN_CONTAINER_HEIGHT] })
-          return
-        }
-
-        const textarea = rTextArea.current
-        textarea?.focus()
-      }, [shape.text, shape.size[1], shape.style])
-
-      const style = {
-        font,
-        color,
-        textShadow: meta.isDarkMode
-          ? `0.5px 0.5px 2px rgba(255, 255, 255,.25)`
-          : `0.5px 0.5px 2px rgba(255, 255, 255,.5)`,
-      }
-
-      return (
+    return (
+      <>
+        <div className="tl-binding-util">
+          <button type="button" title="속지 추가" onClick={() => console.log('속지 추가')}>
+            <PlusCircledIcon />
+          </button>
+          <button type="button" title="속지 삭제" onClick={() => console.log('속지 삭제')}>
+            <MinusCircledIcon />
+          </button>
+        </div>
         <HTMLContainer ref={ref} {...events}>
           <StyledStickyContainer
             ref={rContainer}
             isDarkMode={meta.isDarkMode}
             isGhost={isGhost}
-            style={{ backgroundColor: fill, ...style }}
-          >
-            {isBinding && (
-              <div
-                className="tl-binding-indicator"
-                style={{
-                  position: 'absolute',
-                  top: -this.bindingDistance,
-                  left: -this.bindingDistance,
-                  width: `calc(100% + ${this.bindingDistance * 2}px)`,
-                  height: `calc(100% + ${this.bindingDistance * 2}px)`,
-                  backgroundColor: 'var(--tl-selectFill)',
-                }}
-              />
-            )}
-            <StyledText ref={rText} isEditing={isEditing} alignment={shape.style.textAlign}>
-              {shape.text}jajljaf &#8203;
-            </StyledText>
-            {isEditing && (
-              <StyledTextArea
-                ref={rTextArea}
-                onPointerDown={handlePointerDown}
-                value={shape.text}
-                onChange={handleTextChange}
-                onKeyDown={handleKeyDown}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                tabIndex={-1}
-                autoComplete="false"
-                autoCapitalize="false"
-                autoCorrect="false"
-                autoSave="false"
-                autoFocus
-                spellCheck={true}
-                alignment={shape.style.textAlign}
-                onContextMenu={stopPropagation}
-                onCopy={stopPropagation}
-                onPaste={stopPropagation}
-                onCut={stopPropagation}
-              />
-            )}
-          </StyledStickyContainer>
+            style={{ backgroundColor: '#999', ...style }}
+          ></StyledStickyContainer>
         </HTMLContainer>
-      )
-    }
-  )
+      </>
+    )
+  })
 
   Indicator = TDShapeUtil.Indicator<T>(({ shape }) => {
     const {
@@ -327,7 +161,7 @@ export class TemplateUtil extends TDShapeUtil<T, E> {
 /* -------------------------------------------------- */
 
 const PADDING = 16
-const MIN_CONTAINER_HEIGHT = 400
+const TEMPLATE_WIDTH = 1000
 
 const StyledStickyContainer = styled('div', {
   pointerEvents: 'all',
@@ -354,84 +188,5 @@ const StyledStickyContainer = styled('div', {
           '2px 3px 12px -2px rgba(0,0,0,.2), 1px 1px 4px rgba(0,0,0,.16),  1px 1px 2px rgba(0,0,0,.16)',
       },
     },
-  },
-})
-
-const commonTextWrapping = {
-  whiteSpace: 'pre-wrap',
-  overflowWrap: 'break-word',
-  letterSpacing: LETTER_SPACING,
-}
-
-const StyledText = styled('div', {
-  position: 'absolute',
-  top: PADDING,
-  left: PADDING,
-  width: `calc(100% - ${PADDING * 2}px)`,
-  height: 'fit-content',
-  font: 'inherit',
-  pointerEvents: 'none',
-  userSelect: 'none',
-  variants: {
-    isEditing: {
-      true: {
-        opacity: 1,
-      },
-      false: {
-        opacity: 1,
-      },
-    },
-    alignment: {
-      [AlignStyle.Start]: {
-        textAlign: 'left',
-      },
-      [AlignStyle.Middle]: {
-        textAlign: 'center',
-      },
-      [AlignStyle.End]: {
-        textAlign: 'right',
-      },
-      [AlignStyle.Justify]: {
-        textAlign: 'justify',
-      },
-    },
-  },
-  ...commonTextWrapping,
-})
-
-const StyledTextArea = styled('textarea', {
-  width: '100%',
-  height: '100%',
-  border: 'none',
-  overflow: 'hidden',
-  background: 'none',
-  outline: 'none',
-  textAlign: 'left',
-  font: 'inherit',
-  padding: 0,
-  color: 'transparent',
-  verticalAlign: 'top',
-  resize: 'none',
-  caretColor: 'black',
-  ...commonTextWrapping,
-  variants: {
-    alignment: {
-      [AlignStyle.Start]: {
-        textAlign: 'left',
-      },
-      [AlignStyle.Middle]: {
-        textAlign: 'center',
-      },
-      [AlignStyle.End]: {
-        textAlign: 'right',
-      },
-      [AlignStyle.Justify]: {
-        textAlign: 'justify',
-      },
-    },
-  },
-  '&:focus': {
-    outline: 'none',
-    border: 'none',
   },
 })
