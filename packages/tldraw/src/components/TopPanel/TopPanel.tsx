@@ -61,6 +61,7 @@ export const StyledPage = styled('div', {
   padding: '$2',
   borderRadius: '9px',
   backgroundColor: '$panelContrast',
+  boxShadow: 'var(--shadows-panel)',
 })
 
 export const StyledMenu = styled('div', {
