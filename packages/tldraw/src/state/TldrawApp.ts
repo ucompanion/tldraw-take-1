@@ -2533,7 +2533,6 @@ export class TldrawApp extends StateManager<TDSnapshot> {
    * Zoom out by 25%
    */
   zoomIn = (): this => {
-    if (this.disableZoom) return this
     const i = Math.round((this.camera.zoom * 100) / 25)
     const nextZoom = TLDR.getCameraZoom((i + 1) * 0.25)
     return this.zoomTo(nextZoom)
@@ -2543,7 +2542,6 @@ export class TldrawApp extends StateManager<TDSnapshot> {
    * Zoom in by 25%.
    */
   zoomOut = (): this => {
-    if (this.disableZoom) return this
     const i = Math.round((this.camera.zoom * 100) / 25)
     const nextZoom = TLDR.getCameraZoom((i - 1) * 0.25)
     return this.zoomTo(nextZoom)
@@ -3726,9 +3724,13 @@ export class TldrawApp extends StateManager<TDSnapshot> {
 
   onPinchEnd: TLPinchEventHandler = (info, e) => this.currentTool.onPinchEnd?.(info, e)
 
-  onPinch: TLPinchEventHandler = (info, e) => this.currentTool.onPinch?.(info, e)
+  onPinch: TLPinchEventHandler = (info, e) => {
+    if (this.disableZoom) return
+    this.currentTool.onPinch?.(info, e)
+  }
 
   onPan: TLWheelEventHandler = (info, e) => {
+    if (this.disableZoom) return
     if (this.appState.status === 'pinching') return
     // TODO: Pan and pinchzoom are firing at the same time. Considering turning one of them off!
 
@@ -3738,7 +3740,7 @@ export class TldrawApp extends StateManager<TDSnapshot> {
 
     if (Vec.isEqual(next, prev)) return
 
-    //this.pan(delta)
+    this.pan(delta)
 
     // When panning, we also want to call onPointerMove, except when "force panning" via spacebar / middle wheel button (it's called elsewhere in that case)
     if (!this.isForcePanning) this.onPointerMove(info, e as unknown as React.PointerEvent)
@@ -3768,7 +3770,7 @@ export class TldrawApp extends StateManager<TDSnapshot> {
   onPointerMove: TLPointerEventHandler = (info, e) => {
     this.previousPoint = this.currentPoint
     this.updateInputs(info, e)
-    if (this.isForcePanning && this.isPointing) {
+    if (this.isForcePanning && this.isPointing && !this.disableZoom) {
       this.onPan?.({ ...info, delta: Vec.neg(info.delta) }, e as unknown as WheelEvent)
       return
     }
