@@ -1,4 +1,4 @@
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import * as MenuBar from '@radix-ui/react-menubar'
 import * as React from 'react'
 import { useIntl } from 'react-intl'
 import { Panel } from '~components/Primitives/Panel'
@@ -69,46 +69,49 @@ export const ShapesMenu = React.memo(function ShapesMenu({
   const panelStyle = dockPosition === 'bottom' || dockPosition === 'top' ? 'row' : 'column'
 
   return (
-    <DropdownMenu.Root dir="ltr" onOpenChange={selectShapeTool}>
-      <DropdownMenu.Trigger dir="ltr" asChild id="TD-PrimaryTools-Shapes">
-        {/* <div>E</div> */}
-        <ToolButton
-          disabled={isActive && app.shiftKey} // otherwise this continuously opens and closes on "SpacePanning"
-          variant="primary"
-          onDoubleClick={handleDoubleClick}
-          isToolLocked={isActive && isToolLocked}
-          isActive={isActive}
-          onKeyDown={handleKeyDown}
-        >
-          <ShapeGroupIcon />
-        </ToolButton>
-      </DropdownMenu.Trigger>
-      {/* <DropdownMenu.Portal> */}
-      <DropdownMenu.Content asChild side={contentSide} sideOffset={12}>
-        <Panel side="center" style={{ flexDirection: panelStyle }}>
-          {shapeShapes.map((shape, i) => (
-            <Tooltip
-              key={shape}
-              label={intl.formatMessage({ id: shape })}
-              kbd={(4 + i).toString()}
-              id={`TD-PrimaryTools-Shapes-${shape}`}
-            >
-              <DropdownMenu.Item asChild>
-                <ToolButton
-                  variant="primary"
-                  onClick={() => {
-                    app.selectTool(shape)
-                    setLastActiveTool(shape)
-                  }}
+    <MenuBar.Root dir="ltr" onValueChange={selectShapeTool}>
+      <MenuBar.Menu>
+        <MenuBar.Trigger dir="ltr" asChild id="TD-PrimaryTools-Shapes">
+          {/* <div>E</div> */}
+          <ToolButton
+            disabled={isActive && app.shiftKey} // otherwise this continuously opens and closes on "SpacePanning"
+            variant="primary"
+            onDoubleClick={handleDoubleClick}
+            isToolLocked={isActive && isToolLocked}
+            isActive={isActive}
+            onKeyDown={handleKeyDown}
+            onClick={() => console.log(isActive)}
+          >
+            <ShapeGroupIcon />
+          </ToolButton>
+        </MenuBar.Trigger>
+        <MenuBar.Portal>
+          <MenuBar.Content asChild side={contentSide} sideOffset={12}>
+            <Panel side="center" style={{ flexDirection: panelStyle }}>
+              {shapeShapes.map((shape, i) => (
+                <Tooltip
+                  key={shape}
+                  label={intl.formatMessage({ id: shape })}
+                  kbd={(4 + i).toString()}
+                  id={`TD-PrimaryTools-Shapes-${shape}`}
                 >
-                  {shapeShapeIcons[shape]}
-                </ToolButton>
-              </DropdownMenu.Item>
-            </Tooltip>
-          ))}
-        </Panel>
-      </DropdownMenu.Content>
-      {/* </DropdownMenu.Portal> */}
-    </DropdownMenu.Root>
+                  <MenuBar.Item asChild>
+                    <ToolButton
+                      variant="primary"
+                      onClick={() => {
+                        app.selectTool(shape)
+                        setLastActiveTool(shape)
+                      }}
+                    >
+                      {shapeShapeIcons[shape]}
+                    </ToolButton>
+                  </MenuBar.Item>
+                </Tooltip>
+              ))}
+            </Panel>
+          </MenuBar.Content>
+        </MenuBar.Portal>
+      </MenuBar.Menu>
+    </MenuBar.Root>
   )
 })

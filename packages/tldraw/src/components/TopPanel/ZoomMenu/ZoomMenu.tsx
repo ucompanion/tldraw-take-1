@@ -1,7 +1,7 @@
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import * as MenuBar from '@radix-ui/react-menubar'
 import * as React from 'react'
 import { FormattedMessage } from 'react-intl'
-import { DMContent, DMItem } from '~components/Primitives/DropdownMenu'
+import { MBContent, MBItem } from '~components/Primitives/MenuBar'
 import { ToolButton } from '~components/Primitives/ToolButton'
 import { preventEvent } from '~components/preventEvent'
 import { useTldrawApp } from '~hooks'
@@ -16,35 +16,42 @@ export const ZoomMenu = function ZoomMenu() {
   const zoom = app.useStore(zoomSelector)
 
   return (
-    <DropdownMenu.Root dir="ltr">
-      <DropdownMenu.Trigger dir="ltr" asChild id="TD-Zoom">
-        <FixedWidthToolButton onDoubleClick={app.resetZoom} variant="text">
-          {Math.round(zoom * 100)}%
-        </FixedWidthToolButton>
-      </DropdownMenu.Trigger>
-      <DMContent align="end" sideOffset={8}>
-        <DMItem onSelect={preventEvent} onClick={app.zoomIn} kbd="#+" id="TD-Zoom-Zoom_In">
-          <FormattedMessage id="zoom.in" />
-        </DMItem>
-        <DMItem onSelect={preventEvent} onClick={app.zoomOut} kbd="#−" id="TD-Zoom-Zoom_Out">
-          <FormattedMessage id="zoom.out" />
-        </DMItem>
-        <DMItem onSelect={preventEvent} onClick={app.resetZoom} kbd="⇧0" id="TD-Zoom-Zoom_To_100%">
-          <FormattedMessage id="zoom.to" /> 100%
-        </DMItem>
-        <DMItem onSelect={preventEvent} onClick={app.zoomToFit} kbd="⇧1" id="TD-Zoom-To_Fit">
-          <FormattedMessage id="zoom.to.fit" />
-        </DMItem>
-        <DMItem
-          onSelect={preventEvent}
-          onClick={app.zoomToSelection}
-          kbd="⇧2"
-          id="TD-Zoom-To_Selection"
-        >
-          <FormattedMessage id="zoom.to.selection" />
-        </DMItem>
-      </DMContent>
-    </DropdownMenu.Root>
+    <MenuBar.Root dir="ltr">
+      <MenuBar.Menu>
+        <MenuBar.Trigger dir="ltr" asChild id="TD-Zoom">
+          <FixedWidthToolButton onDoubleClick={app.resetZoom} variant="text">
+            {Math.round(zoom * 100)}%
+          </FixedWidthToolButton>
+        </MenuBar.Trigger>
+        <MBContent align="end" sideOffset={8}>
+          <MBItem onSelect={preventEvent} onClick={app.zoomIn} kbd="#+" id="TD-Zoom-Zoom_In">
+            <FormattedMessage id="zoom.in" />
+          </MBItem>
+          <MBItem onSelect={preventEvent} onClick={app.zoomOut} kbd="#−" id="TD-Zoom-Zoom_Out">
+            <FormattedMessage id="zoom.out" />
+          </MBItem>
+          <MBItem
+            onSelect={preventEvent}
+            onClick={app.resetZoom}
+            kbd="⇧0"
+            id="TD-Zoom-Zoom_To_100%"
+          >
+            <FormattedMessage id="zoom.to" /> 100%
+          </MBItem>
+          <MBItem onSelect={preventEvent} onClick={app.zoomToFit} kbd="⇧1" id="TD-Zoom-To_Fit">
+            <FormattedMessage id="zoom.to.fit" />
+          </MBItem>
+          <MBItem
+            onSelect={preventEvent}
+            onClick={app.zoomToSelection}
+            kbd="⇧2"
+            id="TD-Zoom-To_Selection"
+          >
+            <FormattedMessage id="zoom.to.selection" />
+          </MBItem>
+        </MBContent>
+      </MenuBar.Menu>
+    </MenuBar.Root>
   )
 }
 

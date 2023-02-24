@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Divider } from '~components/Primitives/Divider'
-import { DMCheckboxItem, DMSubMenu } from '~components/Primitives/DropdownMenu'
+import { MBCheckboxItem, MBSubMenu } from '~components/Primitives/MenuBar'
 import { useTldrawApp } from '~hooks'
 import { styled } from '~styles'
 import { TDDockPosition, TDExportBackground, TDSnapshot } from '~types'
@@ -55,56 +55,56 @@ export function PreferencesMenu() {
   )
 
   return (
-    <DMSubMenu label={intl.formatMessage({ id: 'menu.preferences' })} id="TD-MenuItem-Preferences">
-      {/* <DMCheckboxItem
+    <MBSubMenu label={intl.formatMessage({ id: 'menu.preferences' })} id="TD-MenuItem-Preferences">
+      {/* <MBCheckboxItem
         checked={settings.isDarkMode}
         onCheckedChange={toggleDarkMode}
         kbd="#⇧D"
         id="TD-MenuItem-Preferences-Dark_Mode"
       >
         <FormattedMessage id="preferences.dark.mode" />
-      </DMCheckboxItem> */}
-      <DMCheckboxItem
+      </MBCheckboxItem> */}
+      <MBCheckboxItem
         checked={settings.isFocusMode}
         onCheckedChange={toggleFocusMode}
         kbd="#."
         id="TD-MenuItem-Preferences-Focus_Mode"
       >
         <FormattedMessage id="preferences.focus.mode" />
-      </DMCheckboxItem>
-      {/* <DMCheckboxItem
+      </MBCheckboxItem>
+      {/* <MBCheckboxItem
         checked={settings.isDebugMode}
         onCheckedChange={toggleDebugMode}
         id="TD-MenuItem-Preferences-Debug_Mode"
       >
         <FormattedMessage id="preferences.debug.mode" />
-      </DMCheckboxItem> */}
+      </MBCheckboxItem> */}
       {/* <Divider /> */}
-      <DMCheckboxItem
+      <MBCheckboxItem
         checked={!settings.showGrid}
         onCheckedChange={toggleGrid}
         kbd="#⇧G"
         id="TD-MenuItem-Preferences-Grid"
       >
         <FormattedMessage id="preferences.show.grid" />
-      </DMCheckboxItem>
-      {/* <DMCheckboxItem
+      </MBCheckboxItem>
+      {/* <MBCheckboxItem
         checked={settings.isCadSelectMode}
         onCheckedChange={toggleCadSelectMode}
         id="TD-MenuItem-Preferences-Cad_Selection"
       >
         <FormattedMessage id="preferences.use.cad.selection" />
-      </DMCheckboxItem> */}
-      <DMCheckboxItem
+      </MBCheckboxItem> */}
+      <MBCheckboxItem
         checked={settings.keepStyleMenuOpen}
         onCheckedChange={toggleKeepStyleMenuOpen}
         id="TD-MenuItem-Preferences-Style_menu"
       >
         <FormattedMessage id="preferences.keep.stylemenu.open" />
-      </DMCheckboxItem>
-      <DMSubMenu label={intl.formatMessage({ id: 'dock.position' })}>
+      </MBCheckboxItem>
+      <MBSubMenu label={intl.formatMessage({ id: 'dock.position' })}>
         {DockPosition.map((position) => (
-          <DMCheckboxItem
+          <MBCheckboxItem
             key={position}
             checked={settings.dockPosition === position}
             onCheckedChange={() => handleChangeDockPosition(position as TDDockPosition)}
@@ -113,12 +113,12 @@ export function PreferencesMenu() {
             <StyledText>
               <FormattedMessage id={position} />
             </StyledText>
-          </DMCheckboxItem>
+          </MBCheckboxItem>
         ))}
-      </DMSubMenu>
-      {/* <DMSubMenu label={intl.formatMessage({ id: 'export.background' })}>
+      </MBSubMenu>
+      {/* <MBSubMenu label={intl.formatMessage({ id: 'export.background' })}>
         {Object.values(TDExportBackground).map((exportBackground) => (
-          <DMCheckboxItem
+          <MBCheckboxItem
             key={exportBackground}
             checked={settings.exportBackground === exportBackground}
             onCheckedChange={() => selectExportBackground(exportBackground as TDExportBackground)}
@@ -127,10 +127,10 @@ export function PreferencesMenu() {
             <StyledText>
               <FormattedMessage id={exportBackground as string} />
             </StyledText>
-          </DMCheckboxItem>
+          </MBCheckboxItem>
         ))}
-      </DMSubMenu> */}
-    </DMSubMenu>
+      </MBSubMenu> */}
+    </MBSubMenu>
   )
 }
 

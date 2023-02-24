@@ -1,10 +1,10 @@
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import * as MenuBar from '@radix-ui/react-menubar'
 import { supported } from 'browser-fs-access'
 import * as React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { FilenameDialog } from '~components/Primitives/AlertDialog'
 import { Divider } from '~components/Primitives/Divider'
-import { DMContent, DMItem, DMSubMenu, DMTriggerIcon } from '~components/Primitives/DropdownMenu'
+import { MBContent, MBItem, MBSubMenu, MBTriggerIcon } from '~components/Primitives/MenuBar'
 import { HamburgerMenuIcon } from '~components/Primitives/icons/icoCommon'
 import { preventEvent } from '~components/preventEvent'
 import { useTldrawApp } from '~hooks'
@@ -122,205 +122,210 @@ export const Menu = React.memo(function Menu({ readOnly }: MenuProps) {
 
   return (
     <>
-      <DropdownMenu.Root dir="ltr">
-        <DMTriggerIcon id="TD-MenuIcon">
-          <HamburgerMenuIcon />
-        </DMTriggerIcon>
-        <DMContent variant="menu" id="TD-Menu" side="bottom" align="end">
-          {showFileMenu && (
-            <DMSubMenu
-              label={`${intl.formatMessage({ id: 'menu.file' })}...`}
-              id="TD-MenuItem-File"
+      <MenuBar.Root dir="ltr">
+        <MenuBar.Menu>
+          <MBTriggerIcon id="TD-MenuIcon">
+            <HamburgerMenuIcon />
+          </MBTriggerIcon>
+          <MBContent variant="menu" id="TD-Menu" side="bottom" align="end">
+            {showFileMenu && (
+              <MBSubMenu
+                label={`${intl.formatMessage({ id: 'menu.file' })}...`}
+                id="TD-MenuItem-File"
+              >
+                {app.callbacks.onNewProject && (
+                  <MBItem onClick={onNewProject} kbd="#N" id="TD-MenuItem-File-New_Project">
+                    <FormattedMessage id="new.project" />
+                  </MBItem>
+                )}
+                {app.callbacks.onOpenProject && (
+                  <MBItem onClick={onOpenProject} kbd="#O" id="TD-MenuItem-File-Open">
+                    <FormattedMessage id="open" />
+                    ...
+                  </MBItem>
+                )}
+                {app.callbacks.onSaveProject && (
+                  <MBItem onClick={onSaveProject} kbd="#S" id="TD-MenuItem-File-Save">
+                    <FormattedMessage id="save" />
+                  </MBItem>
+                )}
+                {app.callbacks.onSaveProjectAs && (
+                  <MBItem onClick={handleSaveProjectAs} kbd="#⇧S" id="TD-MenuItem-File-Save_As">
+                    <FormattedMessage id="save.as" />
+                    ...
+                  </MBItem>
+                )}
+                {!disableAssets && (
+                  <>
+                    <Divider />
+                    <MBItem onClick={handleUploadMedia} kbd="#U" id="TD-MenuItem-File-Upload_Media">
+                      <FormattedMessage id="upload.media" />
+                    </MBItem>
+                  </>
+                )}
+              </MBSubMenu>
+            )}
+            <MBSubMenu
+              label={`${intl.formatMessage({ id: 'menu.edit' })}...`}
+              id="TD-MenuItem-Edit"
             >
-              {app.callbacks.onNewProject && (
-                <DMItem onClick={onNewProject} kbd="#N" id="TD-MenuItem-File-New_Project">
-                  <FormattedMessage id="new.project" />
-                </DMItem>
-              )}
-              {app.callbacks.onOpenProject && (
-                <DMItem onClick={onOpenProject} kbd="#O" id="TD-MenuItem-File-Open">
-                  <FormattedMessage id="open" />
-                  ...
-                </DMItem>
-              )}
-              {app.callbacks.onSaveProject && (
-                <DMItem onClick={onSaveProject} kbd="#S" id="TD-MenuItem-File-Save">
-                  <FormattedMessage id="save" />
-                </DMItem>
-              )}
-              {app.callbacks.onSaveProjectAs && (
-                <DMItem onClick={handleSaveProjectAs} kbd="#⇧S" id="TD-MenuItem-File-Save_As">
-                  <FormattedMessage id="save.as" />
-                  ...
-                </DMItem>
-              )}
-              {!disableAssets && (
-                <>
-                  <Divider />
-                  <DMItem onClick={handleUploadMedia} kbd="#U" id="TD-MenuItem-File-Upload_Media">
-                    <FormattedMessage id="upload.media" />
-                  </DMItem>
-                </>
-              )}
-            </DMSubMenu>
-          )}
-          <DMSubMenu label={`${intl.formatMessage({ id: 'menu.edit' })}...`} id="TD-MenuItem-Edit">
-            <DMItem
-              onSelect={preventEvent}
-              onClick={app.undo}
-              disabled={readOnly}
-              kbd="#Z"
-              id="TD-MenuItem-Edit-Undo"
-            >
-              <FormattedMessage id="undo" />
-            </DMItem>
-            <DMItem
-              onSelect={preventEvent}
-              onClick={app.redo}
-              disabled={readOnly}
-              kbd="#⇧Z"
-              id="TD-MenuItem-Edit-Redo"
-            >
-              <FormattedMessage id="redo" />
-            </DMItem>
-            <Divider />
-            <DMItem
-              onSelect={preventEvent}
-              disabled={!hasSelection || readOnly}
-              onClick={handleCut}
-              kbd="#X"
-              id="TD-MenuItem-Edit-Cut"
-            >
-              <FormattedMessage id="cut" />
-            </DMItem>
-            <DMItem
-              onSelect={preventEvent}
-              disabled={!hasSelection}
-              onClick={handleCopy}
-              kbd="#C"
-              id="TD-MenuItem-Edit-Copy"
-            >
-              <FormattedMessage id="copy" />
-            </DMItem>
-            <DMItem
-              onSelect={preventEvent}
-              onClick={handlePaste}
-              kbd="#V"
-              id="TD-MenuItem-Edit-Paste"
-            >
-              <FormattedMessage id="paste" />
-            </DMItem>
-            <Divider />
-            <DMSubMenu
-              label={`${intl.formatMessage({ id: 'copy.as' })}...`}
-              size="small"
-              id="TD-MenuItem-Copy-As"
-            >
-              <DMItem onClick={handleCopySVG} id="TD-MenuItem-Copy-as-SVG">
-                SVG
-              </DMItem>
-              <DMItem onClick={handleCopyPNG} id="TD-MenuItem-Copy-As-PNG">
-                PNG
-              </DMItem>
-              <DMItem onClick={handleCopyJSON} id="TD-MenuItem-Copy_as_JSON">
-                JSON
-              </DMItem>
-            </DMSubMenu>
-            <DMSubMenu
-              label={`${intl.formatMessage({ id: 'export.as' })}...`}
-              size="small"
-              id="TD-MenuItem-Export"
-            >
-              <DMItem onClick={handleExportSVG} id="TD-MenuItem-Export-SVG">
-                SVG
-              </DMItem>
-              <DMItem onClick={handleExportPNG} id="TD-MenuItem-Export-PNG">
-                PNG
-              </DMItem>
-              <DMItem onClick={handleExportJPG} id="TD-MenuItem-Export-JPG">
-                JPG
-              </DMItem>
-              <DMItem onClick={handleExportWEBP} id="TD-MenuItem-Export-WEBP">
-                WEBP
-              </DMItem>
-              <DMItem onClick={handleExportJSON} id="TD-MenuItem-Export-JSON">
-                JSON
-              </DMItem>
-            </DMSubMenu>
+              <MBItem
+                onSelect={preventEvent}
+                onClick={app.undo}
+                disabled={readOnly}
+                kbd="#Z"
+                id="TD-MenuItem-Edit-Undo"
+              >
+                <FormattedMessage id="undo" />
+              </MBItem>
+              <MBItem
+                onSelect={preventEvent}
+                onClick={app.redo}
+                disabled={readOnly}
+                kbd="#⇧Z"
+                id="TD-MenuItem-Edit-Redo"
+              >
+                <FormattedMessage id="redo" />
+              </MBItem>
+              <Divider />
+              <MBItem
+                onSelect={preventEvent}
+                disabled={!hasSelection || readOnly}
+                onClick={handleCut}
+                kbd="#X"
+                id="TD-MenuItem-Edit-Cut"
+              >
+                <FormattedMessage id="cut" />
+              </MBItem>
+              <MBItem
+                onSelect={preventEvent}
+                disabled={!hasSelection}
+                onClick={handleCopy}
+                kbd="#C"
+                id="TD-MenuItem-Edit-Copy"
+              >
+                <FormattedMessage id="copy" />
+              </MBItem>
+              <MBItem
+                onSelect={preventEvent}
+                onClick={handlePaste}
+                kbd="#V"
+                id="TD-MenuItem-Edit-Paste"
+              >
+                <FormattedMessage id="paste" />
+              </MBItem>
+              <Divider />
+              <MBSubMenu
+                label={`${intl.formatMessage({ id: 'copy.as' })}...`}
+                size="small"
+                id="TD-MenuItem-Copy-As"
+              >
+                <MBItem onClick={handleCopySVG} id="TD-MenuItem-Copy-as-SVG">
+                  SVG
+                </MBItem>
+                <MBItem onClick={handleCopyPNG} id="TD-MenuItem-Copy-As-PNG">
+                  PNG
+                </MBItem>
+                <MBItem onClick={handleCopyJSON} id="TD-MenuItem-Copy_as_JSON">
+                  JSON
+                </MBItem>
+              </MBSubMenu>
+              <MBSubMenu
+                label={`${intl.formatMessage({ id: 'export.as' })}...`}
+                size="small"
+                id="TD-MenuItem-Export"
+              >
+                <MBItem onClick={handleExportSVG} id="TD-MenuItem-Export-SVG">
+                  SVG
+                </MBItem>
+                <MBItem onClick={handleExportPNG} id="TD-MenuItem-Export-PNG">
+                  PNG
+                </MBItem>
+                <MBItem onClick={handleExportJPG} id="TD-MenuItem-Export-JPG">
+                  JPG
+                </MBItem>
+                <MBItem onClick={handleExportWEBP} id="TD-MenuItem-Export-WEBP">
+                  WEBP
+                </MBItem>
+                <MBItem onClick={handleExportJSON} id="TD-MenuItem-Export-JSON">
+                  JSON
+                </MBItem>
+              </MBSubMenu>
 
+              <Divider />
+              <MBItem
+                onSelect={preventEvent}
+                onClick={handleSelectAll}
+                kbd="#A"
+                id="TD-MenuItem-Select_All"
+              >
+                <FormattedMessage id="select.all" />
+              </MBItem>
+              <MBItem
+                onSelect={preventEvent}
+                disabled={!hasSelection}
+                onClick={handleSelectNone}
+                id="TD-MenuItem-Select_None"
+              >
+                <FormattedMessage id="select.none" />
+              </MBItem>
+              <Divider />
+              <MBItem
+                onSelect={handleDelete}
+                disabled={!hasSelection}
+                kbd="⌫"
+                id="TD-MenuItem-Delete"
+              >
+                <FormattedMessage id="delete" />
+              </MBItem>
+            </MBSubMenu>
+            <MBSubMenu label={intl.formatMessage({ id: 'menu.view' })} id="TD-MenuItem-Edit">
+              <MBItem
+                onSelect={preventEvent}
+                onClick={app.zoomIn}
+                kbd="#+"
+                id="TD-MenuItem-View-ZoomIn"
+              >
+                <FormattedMessage id="zoom.in" />
+              </MBItem>
+              <MBItem
+                onSelect={preventEvent}
+                onClick={app.zoomOut}
+                kbd="#-"
+                id="TD-MenuItem-View-ZoomOut"
+              >
+                <FormattedMessage id="zoom.out" />
+              </MBItem>
+              <MBItem
+                onSelect={preventEvent}
+                onClick={handleZoomTo100}
+                kbd="⇧+0"
+                id="TD-MenuItem-View-ZoomTo100"
+              >
+                <FormattedMessage id="zoom.to" /> 100%
+              </MBItem>
+              <MBItem
+                onSelect={preventEvent}
+                onClick={app.zoomToFit}
+                kbd="⇧+1"
+                id="TD-MenuItem-View-ZoomToFit"
+              >
+                <FormattedMessage id="zoom.to.fit" />
+              </MBItem>
+              <MBItem
+                onSelect={preventEvent}
+                onClick={app.zoomToSelection}
+                kbd="⇧+2"
+                id="TD-MenuItem-View-ZoomToSelection"
+              >
+                <FormattedMessage id="zoom.to.selection" />
+              </MBItem>
+            </MBSubMenu>
             <Divider />
-            <DMItem
-              onSelect={preventEvent}
-              onClick={handleSelectAll}
-              kbd="#A"
-              id="TD-MenuItem-Select_All"
-            >
-              <FormattedMessage id="select.all" />
-            </DMItem>
-            <DMItem
-              onSelect={preventEvent}
-              disabled={!hasSelection}
-              onClick={handleSelectNone}
-              id="TD-MenuItem-Select_None"
-            >
-              <FormattedMessage id="select.none" />
-            </DMItem>
-            <Divider />
-            <DMItem
-              onSelect={handleDelete}
-              disabled={!hasSelection}
-              kbd="⌫"
-              id="TD-MenuItem-Delete"
-            >
-              <FormattedMessage id="delete" />
-            </DMItem>
-          </DMSubMenu>
-          <DMSubMenu label={intl.formatMessage({ id: 'menu.view' })} id="TD-MenuItem-Edit">
-            <DMItem
-              onSelect={preventEvent}
-              onClick={app.zoomIn}
-              kbd="#+"
-              id="TD-MenuItem-View-ZoomIn"
-            >
-              <FormattedMessage id="zoom.in" />
-            </DMItem>
-            <DMItem
-              onSelect={preventEvent}
-              onClick={app.zoomOut}
-              kbd="#-"
-              id="TD-MenuItem-View-ZoomOut"
-            >
-              <FormattedMessage id="zoom.out" />
-            </DMItem>
-            <DMItem
-              onSelect={preventEvent}
-              onClick={handleZoomTo100}
-              kbd="⇧+0"
-              id="TD-MenuItem-View-ZoomTo100"
-            >
-              <FormattedMessage id="zoom.to" /> 100%
-            </DMItem>
-            <DMItem
-              onSelect={preventEvent}
-              onClick={app.zoomToFit}
-              kbd="⇧+1"
-              id="TD-MenuItem-View-ZoomToFit"
-            >
-              <FormattedMessage id="zoom.to.fit" />
-            </DMItem>
-            <DMItem
-              onSelect={preventEvent}
-              onClick={app.zoomToSelection}
-              kbd="⇧+2"
-              id="TD-MenuItem-View-ZoomToSelection"
-            >
-              <FormattedMessage id="zoom.to.selection" />
-            </DMItem>
-          </DMSubMenu>
-          <Divider />
-          <PreferencesMenu />
-        </DMContent>
-      </DropdownMenu.Root>
+            <PreferencesMenu />
+          </MBContent>
+        </MenuBar.Menu>
+      </MenuBar.Root>
       <FilenameDialog isOpen={openDialog} onClose={() => setOpenDialog(false)} />
     </>
   )
