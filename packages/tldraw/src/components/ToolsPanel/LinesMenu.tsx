@@ -1,4 +1,4 @@
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import * as MenuBar from '@radix-ui/react-menubar'
 import * as React from 'react'
 import { useIntl } from 'react-intl'
 import { Panel } from '~components/Primitives/Panel'
@@ -63,47 +63,48 @@ export const LinesMenu = React.memo(function LinesMenu({
   const panelStyle = dockPosition === 'bottom' || dockPosition === 'top' ? 'row' : 'column'
 
   return (
-    <DropdownMenu.Root dir="ltr" onOpenChange={selectShapeTool2}>
-      <DropdownMenu.Trigger dir="ltr" asChild id="TD-PrimaryTools-Lines">
-        {/* <div>T</div> */}
-        <ToolButton
-          disabled={isActive && app.shiftKey}
-          variant="primary"
-          onDoubleClick={handleDoubleClick}
-          isToolLocked={isActive && isToolLocked}
-          isActive={isActive}
-          onKeyDown={handleKeyDown}
-        >
-          {lineShapeIcons[lineActiveTool]}
-        </ToolButton>
-      </DropdownMenu.Trigger>
-
-      {/* <DropdownMenu.Portal> */}
-      <DropdownMenu.Content asChild side={contentSide} sideOffset={12}>
-        <Panel side="center" style={{ flexDirection: panelStyle }}>
-          {lineShapes.map((shape, i) => (
-            <Tooltip
-              key={shape}
-              label={intl.formatMessage({ id: shape })}
-              kbd={(4 + i).toString()}
-              id={`TD-PrimaryTools-Lines-${shape}`}
-            >
-              <DropdownMenu.Item asChild>
-                <ToolButton
-                  variant="primary"
-                  onClick={() => {
-                    app.selectTool(shape)
-                    setLineActiveTool(shape)
-                  }}
+    <MenuBar.Root dir="ltr" asChild onValueChange={selectShapeTool2}>
+      <MenuBar.Menu>
+        <MenuBar.Trigger dir="ltr" asChild id="TD-PrimaryTools-Lines">
+          <ToolButton
+            disabled={isActive && app.shiftKey}
+            variant="primary"
+            onDoubleClick={handleDoubleClick}
+            isToolLocked={isActive && isToolLocked}
+            isActive={isActive}
+            onKeyDown={handleKeyDown}
+            onClick={() => console.log(isActive)}
+          >
+            {lineShapeIcons[lineActiveTool]}
+          </ToolButton>
+        </MenuBar.Trigger>
+        <MenuBar.Portal>
+          <MenuBar.Content asChild side={contentSide} sideOffset={12}>
+            <Panel side="center" style={{ flexDirection: panelStyle }}>
+              {lineShapes.map((shape, i) => (
+                <Tooltip
+                  key={shape}
+                  label={intl.formatMessage({ id: shape })}
+                  kbd={(4 + i).toString()}
+                  id={`TD-PrimaryTools-Lines-${shape}`}
                 >
-                  {lineShapeIcons[shape]}
-                </ToolButton>
-              </DropdownMenu.Item>
-            </Tooltip>
-          ))}
-        </Panel>
-      </DropdownMenu.Content>
-      {/* </DropdownMenu.Portal> */}
-    </DropdownMenu.Root>
+                  <MenuBar.Item asChild>
+                    <ToolButton
+                      variant="primary"
+                      onClick={() => {
+                        app.selectTool(shape)
+                        setLineActiveTool(shape)
+                      }}
+                    >
+                      {lineShapeIcons[shape]}
+                    </ToolButton>
+                  </MenuBar.Item>
+                </Tooltip>
+              ))}
+            </Panel>
+          </MenuBar.Content>
+        </MenuBar.Portal>
+      </MenuBar.Menu>
+    </MenuBar.Root>
   )
 })
