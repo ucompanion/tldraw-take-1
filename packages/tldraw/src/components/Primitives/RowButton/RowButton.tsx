@@ -17,6 +17,7 @@ export interface RowButtonProps {
   hasIndicator?: boolean
   hasArrow?: boolean
   id?: string
+  touchStyle?: boolean
 }
 
 export const RowButton = React.forwardRef<HTMLButtonElement, RowButtonProps>(
@@ -31,6 +32,7 @@ export const RowButton = React.forwardRef<HTMLButtonElement, RowButtonProps>(
       variant,
       kbd,
       children,
+      touchStyle = false,
       ...rest
     },
     ref
@@ -45,6 +47,7 @@ export const RowButton = React.forwardRef<HTMLButtonElement, RowButtonProps>(
         onClick={onClick}
         variant={variant}
         {...rest}
+        className={touchStyle ? 'touchDevice' : ''}
       >
         <StyledRowButtonInner>
           {children}
@@ -122,7 +125,7 @@ export const StyledRowButton = styled('button', {
     backgroundColor: '$hover',
   },
 
-  ':hover': {
+  ':not(.touchDevice):hover': {
     backgroundColor: '$hover',
   },
 

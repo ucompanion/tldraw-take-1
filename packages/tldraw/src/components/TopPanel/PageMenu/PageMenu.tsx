@@ -20,6 +20,8 @@ export function PageMenu() {
 }
 
 function PageMenuContent() {
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+
   const app = useTldrawApp()
   const intl = useIntl()
 
@@ -84,6 +86,7 @@ function PageMenuContent() {
             key={page.id}
             isDropAbove={i === dropIndex && i === 0}
             isDropBelow={dropIndex !== null && i === dropIndex - 1}
+            className={isTouchDevice ? 'touchDevice' : ''}
           >
             <div
               key={page.id}
@@ -108,7 +111,7 @@ function PageMenuContent() {
         ))}
       </StyledPageMenuScroll>
       <Divider />
-      <RowButton onClick={handleCreatePage}>
+      <RowButton onClick={handleCreatePage} touchStyle={isTouchDevice}>
         <span>
           <FormattedMessage id="create.page" />
         </span>
@@ -143,11 +146,11 @@ const ButtonWithOptions = styled('div', {
   gridAutoFlow: 'column',
   margin: 0,
 
-  '& > *[data-shy="true"]': {
+  '&:not(.touchDevice) > *[data-shy="true"]': {
     opacity: 0,
   },
 
-  '&:hover > *[data-shy="true"]': {
+  '&:not(.touchDevice):hover > *[data-shy="true"]': {
     opacity: 1,
   },
 
