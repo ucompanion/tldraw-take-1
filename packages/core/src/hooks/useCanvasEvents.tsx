@@ -6,6 +6,15 @@ export function useCanvasEvents() {
 
   return React.useMemo(() => {
     return {
+      onTouchStart: (e: React.TouchEvent) => {
+        e.preventDefault()
+      },
+      onTouchMove: (e: React.TouchEvent) => {
+        e.preventDefault()
+      },
+      onTouchEnd: (e: React.TouchEvent) => {
+        e.preventDefault()
+      },
       onPointerDown: (e: React.PointerEvent) => {
         //console.log('포인터가 다운되었대.');
         if ((e as any).dead) return
